@@ -77,9 +77,4 @@ public class SimpleTextController : MonoBehaviour
     {
         return _key;
     }
-
-    public void Refresh()
-    {
-        UpdateText();
-    }
 }
