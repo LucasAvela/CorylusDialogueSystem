@@ -114,10 +114,13 @@ public class DialogueController : MonoBehaviour
             }
         }
 
-        if (_questionController._questionMode == QuestionControllerModule.QuestionsModes.OnDialogueAdvance && _actualQuestionKey != null)
+        if (_questionController != null)
         {
-            OnQuestionStart();
-            return;
+            if (_questionController._questionMode == QuestionControllerModule.QuestionsModes.OnDialogueAdvance && _actualQuestionKey != null)
+            {
+                OnQuestionStart();
+                return;
+            }
         }
 
         if (_nextDialogueKey != null)
@@ -441,9 +444,12 @@ public class DialogueController : MonoBehaviour
     {
         onDialogueWriteFinish?.Invoke();
 
-        if (_questionController._questionMode == QuestionControllerModule.QuestionsModes.OnWriteFinish && _actualQuestionKey != null)
+        if (_questionController != null)
         {
-            OnQuestionStart();
+            if (_questionController._questionMode == QuestionControllerModule.QuestionsModes.OnWriteFinish && _actualQuestionKey != null)
+            {
+                OnQuestionStart();
+            }
         }
     }
 
