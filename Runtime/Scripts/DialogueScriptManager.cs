@@ -9,15 +9,15 @@ public class DialogueScriptManager : MonoBehaviour
     private DialogueController _dialogueController;
 
     [SerializeField] private MonoBehaviour _scriptsContainer;
-    private MethodReflection _methodTarget;
+    private object _methodTarget;
 
     void Awake()
     {
         if (_scriptsContainer != null)
-            _methodTarget = _scriptsContainer as MethodReflection;
+            _methodTarget = _scriptsContainer;
 
         if (_methodTarget == null)
-            Debug.LogError("_scriptsContainer não implementa MethodReflection!");
+            Debug.LogError("ScriptsContainer não implementa MethodReflection!");
     }
 
     void Start()
@@ -43,8 +43,7 @@ public class DialogueScriptManager : MonoBehaviour
         string methodName = input.Substring(0, openIndex).Trim();
         string argument = input.Substring(openIndex + 1, closeIndex - openIndex - 1).Trim();
 
-        Type interfaceType = typeof(MethodReflection);
-        MethodInfo method = interfaceType.GetMethod(methodName);
+        MethodInfo method = _methodTarget.GetType().GetMethod(methodName);
 
         if (method == null || method.ReturnType != typeof(void))
         {
@@ -90,9 +89,9 @@ public class DialogueScriptManager : MonoBehaviour
         try
         {
             Type interfaceType = typeof(MethodReflection);
-            MethodInfo method = interfaceType.GetMethod(methodName);
+            MethodInfo method = _methodTarget.GetType().GetMethod(methodName);
 
-            if (method == null || method.ReturnType != typeof(IEnumerator))
+            if (method == null || !typeof(IEnumerator).IsAssignableFrom(method.ReturnType))
             {
                 Debug.LogWarning($"Method '{methodName}' is not valid for CallCoroutine.");
                 yield break;
@@ -135,6 +134,18 @@ public class DialogueScriptManager : MonoBehaviour
             return text;
         }
 
-        return _methodTarget.InsertText(insert, text);
+        try
+        {
+            MethodInfo method = _methodTarget.GetType().GetMethod("InsertText");
+            if (method == null) return text;
+
+            object result = method.Invoke(_methodTarget, new object[] { insert, text });
+            return result as string ?? text;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error invoking InsertText: {ex.Message}");
+            return text;
+        }
     }
 }
