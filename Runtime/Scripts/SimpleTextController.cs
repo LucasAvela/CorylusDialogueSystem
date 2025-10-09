@@ -38,15 +38,21 @@ public class SimpleTextController : MonoBehaviour
     }
 
     void OnDisable()
-    {
-        _dialogueManager.onLanguageUpdated -= UpdateText;
-        _dmSubscribed = false;
+    {   
+        if (_dialogueManager != null)
+        {
+            _dialogueManager.onLanguageUpdated -= UpdateText;
+            _dmSubscribed = false;
+        }
     }
 
     void OnDestroy()
     {
-        _dialogueManager.onLanguageUpdated -= UpdateText;
-        _dmSubscribed = false;
+        if (_dialogueManager != null)
+        {
+            _dialogueManager.onLanguageUpdated -= UpdateText;
+            _dmSubscribed = false;
+        }
     }
 
     private void UpdateText()
