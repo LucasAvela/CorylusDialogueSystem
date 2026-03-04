@@ -360,6 +360,11 @@ public class DialogueController : MonoBehaviour
                 spriteIndex++;
             }
 
+            if (writeCursor < text.Length && text[writeCursor] == '\\')
+            {
+                writeCursor += 2;
+            }
+
             if (_skipWritingDialogue && !_onMiddleScriptRunning)
             {
                 bool toScript = false;
